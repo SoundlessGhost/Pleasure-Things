@@ -34,3 +34,16 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+
+<!-- chapter Model -->
+
+1. id - Done.
+2. title - Done.
+3. video url - Done.
+4. course id - Done.
+5. description - Done.
+6. isFree ( false ) - Done.
+7. isPublished ( false ) - Done.
+8. position for chapter drag & drop .
+9. mux data for play video
+10. user progress
