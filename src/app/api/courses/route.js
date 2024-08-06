@@ -1,4 +1,5 @@
 import ConnectDB from "@/lib/ConnectDB";
+import { isTeacher } from "@/lib/Teacher";
 import { Courses } from "@/models/Courses";
 import { NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
@@ -29,12 +30,19 @@ export async function POST(request) {
     await ConnectDB();
 
     const { userId } = auth();
-    if (!userId) {
+    if (!userId || !isTeacher(userId)) {
       return NextResponse.json("unauthorized", { status: 401 });
     }
 
-    const { title, description, courseImage, price, category, isPublished } =
-      await request.json();
+    const {
+      title,
+      description,
+      courseImage,
+      price,
+      category,
+      isPublished,
+      isPurchase,
+    } = await request.json();
 
     const NewCourse = await Courses.create({
       userId,
@@ -44,6 +52,7 @@ export async function POST(request) {
       price,
       category,
       isPublished,
+      isPurchase,
     });
     return NextResponse.json(NewCourse, { status: 201 });
   } catch (error) {

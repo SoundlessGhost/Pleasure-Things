@@ -27,7 +27,6 @@ import {
 } from "@/components/ui/table";
 
 import Link from "next/link";
-import toast from "react-hot-toast";
 
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
@@ -37,7 +36,6 @@ import {
   CirclePlus,
   FolderCog,
   MoreHorizontal,
-  Trash,
 } from "lucide-react";
 
 export const columns = [
@@ -64,7 +62,7 @@ export const columns = [
     cell: ({ row }) => (
       <div className="capitalize">
         {row.getValue("isPublished") ? (
-          <Button size="sm" className="text-xs cursor-default bg-sky-600">
+          <Button size="sm" className="text-xs cursor-default bg-sky-600 hover:bg-sky-600">
             Published
           </Button>
         ) : (
@@ -129,9 +127,9 @@ export const columns = [
 
 export function TableData({ data }) {
   const [sorting, setSorting] = useState([]);
+  const [rowSelection, setRowSelection] = useState({});
   const [columnFilters, setColumnFilters] = useState([]);
   const [columnVisibility, setColumnVisibility] = useState({});
-  const [rowSelection, setRowSelection] = useState({});
 
   const table = useReactTable({
     data,

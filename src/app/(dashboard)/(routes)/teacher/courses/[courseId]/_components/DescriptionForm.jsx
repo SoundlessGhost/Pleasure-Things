@@ -26,15 +26,15 @@ const DescriptionForm = ({ courseId, value }) => {
       await axios.patch(`/api/courses/${courseId}`, {
         description: CourseDescription,
       });
-      toast.success("Description Updated");
-
-      setLoading(false);
-      setIsEditing(false);
 
       value.description = CourseDescription;
+      setIsEditing(false);
+
+      toast.success("Description Updated");
       router.refresh();
     } catch {
       toast.error("Something Went Wrong");
+    } finally {
       setLoading(false);
     }
   };

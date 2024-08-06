@@ -1,6 +1,6 @@
 "use client";
-import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
 
 import {
   Select,
@@ -35,15 +35,15 @@ const CategoryForm = ({ courseId, value }) => {
       await axios.patch(`/api/courses/${courseId}`, {
         category: CourseCategory,
       });
-      toast.success("Category Updated");
-
-      setLoading(false);
       setIsEditing(false);
 
       value.category = CourseCategory;
+
+      toast.success("Category Updated");
       router.refresh();
     } catch {
       toast.error("Something Went Wrong");
+    } finally {
       setLoading(false);
     }
   };
@@ -62,6 +62,8 @@ const CategoryForm = ({ courseId, value }) => {
           )}
         </Button>
       </Label>
+
+      {/* Dropdown Select Content */}
 
       {isEditing ? (
         <>

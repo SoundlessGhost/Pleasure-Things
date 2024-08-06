@@ -26,15 +26,15 @@ const ChapterAccessForm = ({ courseId, value, chapterId }) => {
       await axios.patch(`/api/courses/${courseId}/chapters/${chapterId}`, {
         isFree: isFree,
       });
-      toast.success("Chapter Setting Updated");
-
-      setLoading(false);
-      setIsEditing(false);
 
       value.isFree = isFree;
+      setIsEditing(false);
+
+      toast.success("Chapter Setting Updated");
       router.refresh();
     } catch {
       toast.error("Something Went Wrong");
+    } finally {
       setLoading(false);
     }
   };
@@ -81,7 +81,7 @@ const ChapterAccessForm = ({ courseId, value, chapterId }) => {
             </p>
           ) : (
             <p className="text-sm text-slate-600 italic">
-              This chapter is not free. {value.isFree}
+              This chapter is lock. {value.isFree}
             </p>
           )}
         </div>

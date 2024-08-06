@@ -2,18 +2,18 @@
 import SideBarItems from "./SideBarItems";
 
 import { usePathname } from "next/navigation";
-import { BarChart, Compass, Layout, List } from "lucide-react";
+import { BarChart, Compass, List, Trophy } from "lucide-react";
 
 const guestRoutes = [
   {
-    icon: Layout,
-    label: "Dashboard",
+    icon: Compass,
+    label: "Browse",
     href: "/",
   },
   {
-    icon: Compass,
-    label: "Browse",
-    href: "/search",
+    icon: Trophy,
+    label: "Leaderboard",
+    href: "/leaderboard",
   },
 ];
 

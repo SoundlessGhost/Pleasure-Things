@@ -10,6 +10,15 @@ const UnpublishedBanner = () => {
   );
 };
 
+const LockBanner = () => {
+  return (
+    <div className="bg-yellow-200/80 border-yellow-200 text-primary flex items-center font w-full h-[52px] px-2">
+      <AlertTriangle className="h-4 w-4 mr-2" />
+      <p>You need to purchase this course to watch this chapter.</p>
+    </div>
+  );
+};
+
 const PublishedBanner = () => {
   return (
     <div className=" bg-emerald-400/80 border-emerald-200 text-primary flex items-center font w-full h-[52px] px-2">
@@ -19,4 +28,4 @@ const PublishedBanner = () => {
   );
 };
 
-export { UnpublishedBanner, PublishedBanner };
+export { UnpublishedBanner, PublishedBanner, LockBanner };

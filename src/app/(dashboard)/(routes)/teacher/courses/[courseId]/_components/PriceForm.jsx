@@ -24,15 +24,15 @@ const PriceForm = ({ courseId, value }) => {
     setLoading(true);
     try {
       await axios.patch(`/api/courses/${courseId}`, { price: CoursePrice });
-      toast.success("Price Updated");
-
-      setLoading(false);
-      setIsEditing(false);
 
       value.price = CoursePrice;
+      setIsEditing(false);
+
+      toast.success("Price Updated");
       router.refresh();
     } catch {
       toast.error("Something Went Wrong");
+    } finally {
       setLoading(false);
     }
   };

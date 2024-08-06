@@ -1,4 +1,8 @@
 "use client";
+import axios from "axios";
+import Link from "next/link";
+import toast from "react-hot-toast";
+
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
@@ -6,10 +10,6 @@ import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
-
-import axios from "axios";
-import Link from "next/link";
-import toast from "react-hot-toast";
 
 const CreatePage = () => {
   const [loading, setLoading] = useState(false);
@@ -29,6 +29,7 @@ const CreatePage = () => {
       price: "",
       category: "",
       isPublished: false,
+      isPurchase: false,
     };
 
     try {
@@ -36,10 +37,9 @@ const CreatePage = () => {
 
       router.push(`/teacher/courses/${res.data._id}`);
       toast.success("Course Created");
-
-      setLoading(false);
     } catch {
       toast.error("Something Went Wrong");
+    } finally {
       setLoading(false);
     }
   };

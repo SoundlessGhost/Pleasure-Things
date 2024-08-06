@@ -21,11 +21,11 @@ const SideBarItems = ({ Icon, label, href }) => {
       className={cn(
         "flex items-center text-sm pl-6 text-slate-500  hover:text-slate-600 hover:bg-gray-100 font-[600] transition-all",
         isActive &&
-          "text-[#00abf0] hover:text-[#00abf0] bg-gray-100 hover:bg-gray-100"
+          "text-slate-800 hover:text-slate-800 bg-gray-100 hover:bg-gray-100"
       )}
     >
       <div className="flex items-center gap-x-2 py-4">
-        <Icon size={22} className={cn(isActive && "text-[#00abf0]")} />
+        <Icon size={22} className={cn(isActive && "text-slate-800")} />
         {label}
       </div>
 

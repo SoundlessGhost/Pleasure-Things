@@ -24,15 +24,15 @@ const TitleForm = ({ courseId, value }) => {
     setLoading(true);
     try {
       await axios.patch(`/api/courses/${courseId}`, { title: CourseTitle });
-      toast.success("Title Updated");
-
-      setLoading(false);
-      setIsEditing(false);
 
       value.title = CourseTitle;
+      setIsEditing(false);
+
+      toast.success("Title Updated");
       router.refresh();
     } catch {
       toast.error("Something Went Wrong");
+    } finally {
       setLoading(false);
     }
   };

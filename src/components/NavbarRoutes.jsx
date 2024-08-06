@@ -2,6 +2,7 @@
 import Link from "next/link";
 import SearchInput from "./SearchInput";
 
+import { isTeacher } from "@/lib/Teacher";
 import { usePathname } from "next/navigation";
 import { useAuth, UserButton } from "@clerk/nextjs";
 import { Button, buttonVariants } from "./ui/button";
@@ -9,9 +10,9 @@ import { Button, buttonVariants } from "./ui/button";
 const NavbarRoutes = () => {
   const pathname = usePathname();
 
-  const isPlayerPage = pathname?.includes("/chapter");
+  const isSearchPage = pathname === "/";
+  const isCoursePage = pathname?.includes("/courses");
   const isTeacherPage = pathname?.startsWith("/teacher");
-  const isSearchPage = pathname === "/search";
 
   const { userId } = useAuth();
 
@@ -23,15 +24,16 @@ const NavbarRoutes = () => {
         </div>
       )}
       <div className="flex items-center ml-auto gap-x-2 font">
-        {isTeacherPage || isPlayerPage ? (
+        {isTeacherPage || isCoursePage ? (
           <Link href={"/"} className=" hover:text-muted-foreground">
             <Button>Exit</Button>
           </Link>
-        ) : (
+        ) : isTeacher(userId) ? (
           <Link href={"/teacher/courses"}>
             <Button>Teacher</Button>
           </Link>
-        )}
+        ) : null}
+
         {!userId && (
           <Link
             href={"/sign-in"}
@@ -41,7 +43,7 @@ const NavbarRoutes = () => {
           </Link>
         )}
 
-        <UserButton />
+        <UserButton className="h-10 w-10" />
       </div>
     </>
   );

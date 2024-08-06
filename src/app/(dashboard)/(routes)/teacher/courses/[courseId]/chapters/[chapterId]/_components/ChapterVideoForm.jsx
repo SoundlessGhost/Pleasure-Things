@@ -42,15 +42,15 @@ const ChapterVideoForm = ({ courseId, value, chapterId }) => {
       await axios.patch(`/api/courses/${courseId}/chapters/${chapterId}`, {
         videoUrl: videoUrl,
       });
-      toast.success("Video Updated");
-
-      setLoading(false);
-      setIsEditing(false);
 
       value.videoUrl = videoUrl;
+      setIsEditing(false);
+
+      toast.success("Video Updated");
       router.refresh();
     } catch {
       toast.error("Something Went Wrong");
+    } finally {
       setLoading(false);
     }
   };
@@ -69,6 +69,8 @@ const ChapterVideoForm = ({ courseId, value, chapterId }) => {
           )}
         </Button>
       </Label>
+
+      {/* Video Upload Dropzone */}
 
       {isEditing && (
         <div>
@@ -96,9 +98,16 @@ const ChapterVideoForm = ({ courseId, value, chapterId }) => {
         <p className="text-sm text-slate-600 italic">No Video yet</p>
       )}
 
+      {/* Render Video */}
+
       {videoUrl && !isEditing && (
         <>
-          <video width="320" height="100" controls className=" w-full object-cover h-[300px] rounded-md">
+          <video
+            width="320"
+            height="100"
+            controls
+            className=" w-full object-cover h-[300px] rounded-md"
+          >
             <source src={videoUrl} type="video/mp4" />
             Your browser does not support the video tag.
           </video>

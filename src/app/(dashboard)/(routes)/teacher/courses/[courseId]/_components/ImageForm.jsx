@@ -40,15 +40,15 @@ const ImageForm = ({ courseId, value }) => {
     setLoading(true);
     try {
       await axios.patch(`/api/courses/${courseId}`, { courseImage: imageUrl });
-      toast.success("Image Updated");
-
-      setLoading(false);
-      setIsEditing(false);
 
       value.courseImage = imageUrl;
+      setIsEditing(false);
+
+      toast.success("Image Updated");
       router.refresh();
     } catch {
       toast.error("Something Went Wrong");
+    } finally {
       setLoading(false);
     }
   };

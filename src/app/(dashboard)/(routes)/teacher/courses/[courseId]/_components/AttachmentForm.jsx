@@ -49,12 +49,12 @@ const AttachmentForm = ({ courseId }) => {
       toast.success("Attachment Updated");
 
       setInitialData(response.data);
-      setLoading(false);
       setIsEditing(false);
 
       router.refresh();
     } catch {
       toast.error("Something went wrong");
+    } finally {
       setLoading(false);
     }
   };
@@ -69,19 +69,22 @@ const AttachmentForm = ({ courseId }) => {
 
       setCourseAttachment(null);
       setInitialData({});
-      setLoading(false);
 
       router.refresh();
     } catch {
       toast.error("Something went wrong");
+    } finally {
       setLoading(false);
     }
   };
 
   if (!courseId) {
-    return <p>Loading...</p>;
+    return (
+      <div className="w-full flex items-center justify-center mt-8">
+        <Loader2 className="h-6 w-6 animate-spin" />
+      </div>
+    );
   }
-
   return (
     <div className="bg-slate-200 p-4 rounded-md">
       <Label className="text-sm font-[600] flex items-center justify-between">

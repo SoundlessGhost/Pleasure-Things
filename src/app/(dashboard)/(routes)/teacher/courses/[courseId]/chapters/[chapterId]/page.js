@@ -9,63 +9,49 @@ import { Button } from "@/components/ui/button";
 import { PublishedBanner, UnpublishedBanner } from "@/components/Banner";
 import { ArrowLeft, Eye, LayoutDashboard, Loader2, Video } from "lucide-react";
 
+import useAllChapters from "@/hooks/useAllChapters";
 import ChapterTitleForm from "./_components/ChapterTitleForm";
 import ChapterVideoForm from "./_components/ChapterVideoForm";
 import ChapterAccessForm from "./_components/ChapterAccessForm";
 import ChapterDescriptionForm from "./_components/ChapterDescriptionForm";
 
 const ChapterEditPage = ({ params }) => {
-  const [chapters, setChapters] = useState([]);
+  const router = useRouter();
+
+  const { courseId, chapterId } = params;
+  const { chapters } = useAllChapters(courseId);
+
   const [loading, setLoading] = useState(false);
   const [filteredChapter, setFilteredChapter] = useState({});
 
-  const router = useRouter();
-
-  // Fetch Course Chapter Function
-
-  useEffect(() => {
-    if (!params.courseId) {
-      return;
-    }
-    const fetchChapters = async () => {
-      try {
-        const res = await axios(`/api/courses/${params.courseId}/chapters`);
-        setChapters(res.data);
-      } catch (error) {
-        console.log("Something went wrong fetching the chapters");
-      }
-    };
-
-    fetchChapters();
-  }, [params.courseId]);
+  // Filter Single Chapter Some Issue That's Why Filter Like That
 
   useEffect(() => {
     if (chapters.length > 0) {
-      const chapter = chapters.find(
-        (chapter) => chapter._id === params.chapterId
-      );
+      const chapter = chapters.find((chapter) => chapter._id === chapterId);
       setFilteredChapter(chapter);
     }
-  }, [chapters, params.chapterId]);
+  }, [chapters, chapterId]);
 
-  // OnPublished Function
+  // Chapter On Published Function
 
   const onPublished = async () => {
     setLoading(true);
     try {
       const currentPublishedState = filteredChapter.isPublished;
+
       const res = await axios.patch(
-        `/api/courses/${params.courseId}/chapters/${params.chapterId}`,
+        `/api/courses/${courseId}/chapters/${chapterId}`,
         {
           isPublished: !currentPublishedState,
         }
       );
       setFilteredChapter(res.data);
-      setLoading(false);
-      
+
       router.refresh();
     } catch (error) {
       toast.error("Something Went Wrong");
+    } finally {
       setLoading(false);
     }
   };
@@ -83,6 +69,8 @@ const ChapterEditPage = ({ params }) => {
   const completionText = `(${completedFields}/${totalFields})`;
   const isCompleted = requiredFiled.every(Boolean);
 
+  // TODO : videoUrl & almost 1 chapter add otherwise not published
+
   return (
     <>
       {filteredChapter.isPublished ? (
@@ -90,10 +78,11 @@ const ChapterEditPage = ({ params }) => {
       ) : (
         <UnpublishedBanner />
       )}
+
       <div className="p-6 font">
         <div>
           <Link
-            href={`/teacher/courses/${params.courseId}`}
+            href={`/teacher/courses/${courseId}`}
             className="flex items-center text-sm hover:opacity-70 transition mb-6"
           >
             <ArrowLeft className="h-4 w-4 mr-2" /> Back to Course Setup
@@ -117,6 +106,8 @@ const ChapterEditPage = ({ params }) => {
           </Button>
         </div>
 
+        {/* Render Customize chapter Components */}
+
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-16 ">
           <div>
             <div className="flex items-center gap-x-2 mb-10">
@@ -128,14 +119,14 @@ const ChapterEditPage = ({ params }) => {
 
             <div className="flex flex-col gap-y-6">
               <ChapterTitleForm
-                courseId={params.courseId}
-                chapterId={params.chapterId}
+                courseId={courseId}
+                chapterId={chapterId}
                 value={filteredChapter}
               />
 
               <ChapterDescriptionForm
-                courseId={params.courseId}
-                chapterId={params.chapterId}
+                courseId={courseId}
+                chapterId={chapterId}
                 value={filteredChapter}
               />
             </div>
@@ -147,8 +138,8 @@ const ChapterEditPage = ({ params }) => {
               </h2>
 
               <ChapterAccessForm
-                courseId={params.courseId}
-                chapterId={params.chapterId}
+                courseId={courseId}
+                chapterId={chapterId}
                 value={filteredChapter}
               />
             </div>
@@ -162,8 +153,8 @@ const ChapterEditPage = ({ params }) => {
               </h2>
 
               <ChapterVideoForm
-                courseId={params.courseId}
-                chapterId={params.chapterId}
+                courseId={courseId}
+                chapterId={chapterId}
                 value={filteredChapter}
               />
             </div>

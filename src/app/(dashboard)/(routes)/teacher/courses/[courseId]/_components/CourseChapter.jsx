@@ -6,11 +6,11 @@ import { Button } from "@/components/ui/button";
 import axios from "axios";
 import toast from "react-hot-toast";
 
-import { useRouter } from "next/navigation";
+import { cn } from "@/lib/utils";
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { ConfirmModel } from "@/components/ConfirmModel";
 import { Loader2, Pencil, PlusCircle, Trash } from "lucide-react";
-import { cn } from "@/lib/utils";
 
 const CourseChapter = ({ courseId }) => {
   const [loading, setLoading] = useState(false);
@@ -56,16 +56,16 @@ const CourseChapter = ({ courseId }) => {
 
     try {
       const res = await axios.post(`/api/courses/${courseId}/chapters`, values);
-      toast.success("Chapter Created");
 
       setInitialData((prevChapterTitle) => [...prevChapterTitle, res.data]);
-      setLoading(false);
       setIsEditing(false);
       setCourseChapterTitle("");
 
+      toast.success("Chapter Created");
       router.refresh();
     } catch {
       toast.error("Something Went Wrong");
+    } finally {
       setLoading(false);
     }
   };
@@ -76,16 +76,16 @@ const CourseChapter = ({ courseId }) => {
     setDeleteLoading(true);
     try {
       await axios.delete(`/api/courses/${chapterId}/chapters`);
-      toast.success("Chapter Deleted");
 
       setInitialData((prevChapterTitle) =>
         prevChapterTitle.filter((chapter) => chapter._id !== chapterId)
       );
-      setDeleteLoading(false);
 
+      toast.success("Chapter Deleted");
       router.refresh();
     } catch {
       toast.error("Something went wrong");
+    } finally {
       setDeleteLoading(false);
     }
   };
@@ -110,6 +110,8 @@ const CourseChapter = ({ courseId }) => {
           )}
         </Button>
       </Label>
+
+      {/* Chapter Submit Method */}
 
       {isEditing && (
         <>
@@ -143,6 +145,8 @@ const CourseChapter = ({ courseId }) => {
         <>
           {!isEditing && initialData.length > 0 && (
             <div>
+              {/* Chapter Delete Method */}
+
               {initialData.map((data, i) => (
                 <div key={i} className="mt-2 rounded-md">
                   <div className="flex items-center justify-between p-3 w-full bg-white text-muted-foreground rounded-md">
@@ -159,6 +163,8 @@ const CourseChapter = ({ courseId }) => {
                       </p>
                     </div>
 
+                    {/* Checking Chapter Lock or Published*/}
+
                     <div className="flex items-center gap-x-2">
                       <div
                         className={cn(
@@ -166,7 +172,7 @@ const CourseChapter = ({ courseId }) => {
                           data.isFree && "bg-sky-600"
                         )}
                       >
-                        {data.isFree ? "Free" : "Not Free"}
+                        {data.isFree ? "Free" : "Lock"}
                       </div>
 
                       <div

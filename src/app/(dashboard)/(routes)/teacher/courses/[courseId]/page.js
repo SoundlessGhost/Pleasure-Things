@@ -1,4 +1,9 @@
 "use client";
+import axios from "axios";
+import toast from "react-hot-toast";
+import CourseForm from "./_components/CourseForm";
+import useSingleCourse from "@/hooks/useSingleCourse";
+
 import { useAuth } from "@clerk/nextjs";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
@@ -7,54 +12,35 @@ import { UnpublishedBanner } from "@/components/Banner";
 import { ConfirmModel } from "@/components/ConfirmModel";
 import { LayoutDashboard, Loader2, Trash } from "lucide-react";
 
-import axios from "axios";
-import toast from "react-hot-toast";
-import CourseForm from "@/app/(dashboard)/(routes)/teacher/courses/[courseId]/_components/CourseForm";
-
 const CourseIdPage = ({ params }) => {
-  const [courses, setCourses] = useState([]);
+  const { userId } = useAuth();
+  const { course, refetch } = useSingleCourse(params.courseId);
+
   const [loading, setLoading] = useState(false);
   const [loadingPublish, setLoadingPublish] = useState(false);
 
   const router = useRouter();
-  const { userId } = useAuth();
 
   useEffect(() => {
-    if (!userId && !courses) {
+    if (!userId && !course) {
       router.push("/");
     }
-  }, [userId, router, courses]);
+  }, [userId, router, course]);
 
-  // Fetch Single Course Function
-
-  useEffect(() => {
-    const fetchValues = async () => {
-      try {
-        const response = await axios(`/api/courses/${params.courseId}`);
-        setCourses(response.data);
-      } catch (error) {
-        console.error("Error fetching courses:", error);
-      }
-    };
-    fetchValues();
-  }, [params.courseId]);
-
-  // OnPublished Function
+  // Course Published Function
 
   const onPublished = async () => {
     setLoadingPublish(true);
     try {
-      const currentPublishedState = courses.isPublished;
-      const res = await axios.patch(`/api/courses/${params.courseId}`, {
+      const currentPublishedState = course.isPublished;
+      await axios.patch(`/api/courses/${params.courseId}`, {
         isPublished: !currentPublishedState,
       });
 
-      setCourses(res.data);
-      setLoadingPublish(false);
-
-      router.refresh();
+      refetch();
     } catch (error) {
       toast.error("Something Went Wrong");
+    } finally {
       setLoadingPublish(false);
     }
   };
@@ -65,12 +51,12 @@ const CourseIdPage = ({ params }) => {
     setLoading(true);
     try {
       await axios.delete(`/api/courses/${courseId}`);
-      toast.success("Course Deleted");
 
-      setLoading(false);
+      toast.success("Course Deleted");
       router.push("/teacher/courses");
     } catch {
       toast.error("Something went wrong");
+    } finally {
       setLoading(false);
     }
   };
@@ -78,11 +64,11 @@ const CourseIdPage = ({ params }) => {
   // Fields Required Logic
 
   const requiredFiled = [
-    courses.title,
-    courses.description,
-    courses.category,
-    courses.courseImage,
-    courses.price,
+    course.title,
+    course.description,
+    course.category,
+    course.courseImage,
+    course.price,
   ];
 
   const totalFields = requiredFiled.length;
@@ -92,7 +78,7 @@ const CourseIdPage = ({ params }) => {
 
   return (
     <>
-      {courses.isPublished ? null : <UnpublishedBanner />}
+      {course.isPublished ? null : <UnpublishedBanner />}
 
       <div className="p-6 font">
         <div className="flex items-center justify-between">
@@ -111,7 +97,7 @@ const CourseIdPage = ({ params }) => {
               {loadingPublish ? (
                 <Loader2 className="animate-spin" />
               ) : (
-                <p>{courses.isPublished ? "Unpublish" : "Publish"}</p>
+                <p>{course.isPublished ? "Unpublish" : "Publish"}</p>
               )}
             </Button>
             <ConfirmModel onConfirm={() => handleDelete(params.courseId)}>
@@ -131,7 +117,7 @@ const CourseIdPage = ({ params }) => {
             Customize your course
           </h2>
         </div>
-        <CourseForm values={courses} />
+        <CourseForm values={course} />
       </div>
     </>
   );

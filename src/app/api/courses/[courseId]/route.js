@@ -47,7 +47,7 @@ export async function PATCH(request, { params }) {
       );
     }
 
-    const { title, description, courseImage, price, category, isPublished } =
+    const { title, description, courseImage, price, category, isPublished,isPurchase } =
       await request.json();
 
     const user_course = await Courses.findOne({ _id: courseId });
@@ -68,10 +68,11 @@ export async function PATCH(request, { params }) {
     user_course.price = price ?? user_course.price;
     user_course.category = category ?? user_course.category;
     user_course.isPublished = isPublished ?? user_course.isPublished;
+    user_course.isPurchase = isPurchase ?? user_course.isPurchase;
 
-    const updatedCourseTitle = await user_course.save();
+    const updatedCourse = await user_course.save();
 
-    return NextResponse.json(updatedCourseTitle, { status: 200 });
+    return NextResponse.json(updatedCourse, { status: 200 });
   } catch (error) {
     console.error("Error updating Course Title:", error);
     return NextResponse.json(

@@ -3,6 +3,7 @@ import { Toaster } from "react-hot-toast";
 import { ClerkProvider } from "@clerk/nextjs";
 
 import "./globals.css";
+import QueryProviders from "@/providers/QueryProviders";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -14,13 +15,15 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <ClerkProvider>
-      <html lang="en" suppressHydrationWarning>
-        <head />
-        <body className={inter.className}>
-          <Toaster containerClassName="font" />
-          {children}
-        </body>
-      </html>
+      <QueryProviders>
+        <html lang="en" suppressHydrationWarning>
+          <head />
+          <body className={inter.className}>
+            <Toaster containerClassName="font" />
+            {children}
+          </body>
+        </html>
+      </QueryProviders>
     </ClerkProvider>
   );
 }

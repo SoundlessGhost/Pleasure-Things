@@ -8,7 +8,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
+} from "./ui/alert-dialog";
 
 export function ConfirmModel({ onConfirm, children }) {
   return (

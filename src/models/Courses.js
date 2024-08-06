@@ -25,6 +25,9 @@ const CoursesSchema = new Schema(
     isPublished: {
       type: Boolean,
     },
+    isPurchase: {
+      type: Boolean,
+    },
   },
   { timestamps: true }
 );
