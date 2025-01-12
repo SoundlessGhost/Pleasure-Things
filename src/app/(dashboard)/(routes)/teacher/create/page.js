@@ -13,12 +13,11 @@ import { useRouter } from "next/navigation";
 
 const CreatePage = () => {
   const [loading, setLoading] = useState(false);
-  const [CourseTitle, setCourseTitle] = useState();
+  const [CourseTitle, setCourseTitle] = useState("");
 
   const router = useRouter();
 
   // Handle Create Course Function
-
   const handleCreateCourse = async () => {
     setLoading(true);
 
@@ -26,7 +25,7 @@ const CreatePage = () => {
       title: CourseTitle,
       description: "",
       courseImage: "",
-      price: "",
+      price: 0,
       category: "",
       isPublished: false,
       isPurchase: false,
@@ -35,9 +34,9 @@ const CreatePage = () => {
     try {
       const res = await axios.post("/api/courses", values);
 
-      router.push(`/teacher/courses/${res.data._id}`);
+      router.push(`/teacher/courses/${res.data.id}`); // Redirect to the created course page
       toast.success("Course Created");
-    } catch {
+    } catch (error) {
       toast.error("Something Went Wrong");
     } finally {
       setLoading(false);

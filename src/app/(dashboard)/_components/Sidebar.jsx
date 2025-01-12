@@ -20,7 +20,7 @@ const Sidebar = () => {
         <Link href={"/"} className="flex items-center p-6 mb-1.5">
           <Logo />
           <div className="text-xs pl-2 font">
-            <p>Pleasure Thing </p>
+            <p>Pleasure Things </p>
             <p>Learning Management System</p>
           </div>
         </Link>

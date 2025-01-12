@@ -1,13 +1,11 @@
-import ConnectDB from "@/lib/ConnectDB";
-import { Courses } from "@/models/Courses";
+import prisma from "@/lib/prisma";
 import { NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 
 export async function GET(request, { params }) {
   try {
-    await ConnectDB();
-
     const { courseId } = params;
+
     if (!courseId) {
       return NextResponse.json(
         { message: "ID parameter is missing" },
@@ -15,16 +13,22 @@ export async function GET(request, { params }) {
       );
     }
 
-    const title = await Courses.findOne({ _id: courseId });
-    if (!title) {
-      return NextResponse.json({ message: "title not found" }, { status: 404 });
+    const course = await prisma.course.findUnique({
+      where: { id: courseId },
+    });
+
+    if (!course) {
+      return NextResponse.json(
+        { message: "Course not found" },
+        { status: 404 }
+      );
     }
 
-    return NextResponse.json(title, { status: 200 });
+    return NextResponse.json(course, { status: 200 });
   } catch (error) {
-    console.error("Failed to fetch title:", error);
+    console.error("Failed to fetch course:", error);
     return NextResponse.json(
-      { message: "Something Went Wrong Failed to Fetch title" },
+      { message: "Something went wrong." },
       { status: 500 }
     );
   }
@@ -32,8 +36,6 @@ export async function GET(request, { params }) {
 
 export async function PATCH(request, { params }) {
   try {
-    await ConnectDB();
-
     const { userId } = auth();
     if (!userId) {
       return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
@@ -47,36 +49,36 @@ export async function PATCH(request, { params }) {
       );
     }
 
-    const { title, description, courseImage, price, category, isPublished,isPurchase } =
-      await request.json();
+    const body = await request.json();
+    const course = await prisma.course.findUnique({
+      where: { id: courseId },
+    });
 
-    const user_course = await Courses.findOne({ _id: courseId });
-    if (!user_course) {
+    if (!course || course.userId !== userId) {
       return NextResponse.json(
-        { message: "Course not found" },
-        { status: 404 }
+        { message: "Unauthorized or course not found" },
+        { status: 401 }
       );
     }
 
-    if (user_course.userId.toString() !== userId) {
-      return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
-    }
-
-    user_course.title = title ?? user_course.title;
-    user_course.description = description ?? user_course.description;
-    user_course.courseImage = courseImage ?? user_course.courseImage;
-    user_course.price = price ?? user_course.price;
-    user_course.category = category ?? user_course.category;
-    user_course.isPublished = isPublished ?? user_course.isPublished;
-    user_course.isPurchase = isPurchase ?? user_course.isPurchase;
-
-    const updatedCourse = await user_course.save();
+    const updatedCourse = await prisma.course.update({
+      where: { id: courseId },
+      data: {
+        title: body.title ?? course.title,
+        description: body.description ?? course.description,
+        courseImage: body.courseImage ?? course.courseImage,
+        price: body.price ?? course.price,
+        category: body.category ?? course.category,
+        isPublished: body.isPublished ?? course.isPublished,
+        isPurchase: body.isPurchase ?? course.isPurchase,
+      },
+    });
 
     return NextResponse.json(updatedCourse, { status: 200 });
   } catch (error) {
-    console.error("Error updating Course Title:", error);
+    console.error("Error updating course:", error);
     return NextResponse.json(
-      { message: "Something went wrong. Failed to update Course Title." },
+      { message: "Something went wrong." },
       { status: 500 }
     );
   }
@@ -84,8 +86,6 @@ export async function PATCH(request, { params }) {
 
 export async function DELETE(request, { params }) {
   try {
-    await ConnectDB();
-
     const { userId } = auth();
     if (!userId) {
       return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
@@ -99,19 +99,29 @@ export async function DELETE(request, { params }) {
       );
     }
 
-    const deleteCourse = await Courses.deleteOne({ _id: courseId });
-    if (!deleteCourse) {
+    const course = await prisma.course.findUnique({
+      where: { id: courseId },
+    });
+
+    if (!course || course.userId !== userId) {
       return NextResponse.json(
-        { message: "course not found" },
-        { status: 404 }
+        { message: "Unauthorized or course not found" },
+        { status: 401 }
       );
     }
 
-    return NextResponse.json(deleteCourse, { status: 200 });
+    await prisma.course.delete({
+      where: { id: courseId },
+    });
+
+    return NextResponse.json(
+      { message: "Course deleted successfully" },
+      { status: 200 }
+    );
   } catch (error) {
     console.error("Error deleting course:", error);
     return NextResponse.json(
-      { message: "Something Went Wrong Failed to delete course" },
+      { message: "Something went wrong." },
       { status: 500 }
     );
   }

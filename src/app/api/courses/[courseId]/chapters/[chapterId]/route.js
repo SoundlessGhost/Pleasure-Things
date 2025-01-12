@@ -1,17 +1,15 @@
-import ConnectDB from "@/lib/ConnectDB";
-import { Courses } from "@/models/Courses";
+import prisma from "@/lib/prisma";
+
 import { NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
-import { Chapters } from "@/models/Chapter";
 
 export async function GET(request, { params }) {
   try {
-    await ConnectDB();
-
     const { courseId, chapterId } = params;
+
     if (!courseId || !chapterId) {
       return NextResponse.json(
-        { message: "ID parameter is missing" },
+        { message: "Course ID or Chapter ID parameter is missing" },
         { status: 400 }
       );
     }
@@ -21,49 +19,23 @@ export async function GET(request, { params }) {
       return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
     }
 
-    const ownCourse = await Courses.findOne({ _id: courseId });
-    if (!ownCourse) {
-      return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
-    }
+    // Validate course ownership
+    const course = await prisma.course.findUnique({
+      where: { id: courseId },
+    });
 
-    const chapter = await Chapters.findOne({ _id: chapterId });
-
-    return NextResponse.json(chapter, { status: 200 });
-  } catch (error) {
-    console.error("Failed to fetch chapter:", error);
-    return NextResponse.json(
-      { message: "Something Went Wrong Failed to Fetch chapter" },
-      { status: 500 }
-    );
-  }
-}
-
-export async function PATCH(request, { params }) {
-  try {
-    await ConnectDB();
-
-    const { courseId, chapterId } = params;
-    if (!courseId || !chapterId) {
+    if (!course || course.userId !== userId) {
       return NextResponse.json(
-        { message: "ID parameter is missing" },
-        { status: 400 }
+        { message: "Unauthorized to access this course" },
+        { status: 403 }
       );
     }
 
-    const { userId } = auth();
-    if (!userId) {
-      return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
-    }
+    // Fetch the chapter
+    const chapter = await prisma.chapter.findUnique({
+      where: { id: chapterId },
+    });
 
-    const ownCourse = await Courses.findOne({ _id: courseId });
-    if (!ownCourse) {
-      return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
-    }
-
-    const { title, description, videoUrl, isFree, isPublished } =
-      await request.json();
-
-    const chapter = await Chapters.findOne({ _id: chapterId });
     if (!chapter) {
       return NextResponse.json(
         { message: "Chapter not found" },
@@ -71,19 +43,64 @@ export async function PATCH(request, { params }) {
       );
     }
 
-    chapter.title = title ?? chapter.title;
-    chapter.description = description ?? chapter.description;
-    chapter.videoUrl = videoUrl ?? chapter.videoUrl;
-    chapter.isFree = isFree ?? chapter.isFree;
-    chapter.isPublished = isPublished ?? chapter.isPublished;
+    return NextResponse.json(chapter, { status: 200 });
+  } catch (error) {
+    console.error("Failed to fetch chapter:", error);
+    return NextResponse.json(
+      { message: "Something went wrong while fetching the chapter." },
+      { status: 500 }
+    );
+  }
+}
 
-    const updatedChapter = await chapter.save();
+export async function PATCH(request, { params }) {
+  try {
+    const { courseId, chapterId } = params;
+
+    if (!courseId || !chapterId) {
+      return NextResponse.json(
+        { message: "Course ID or Chapter ID parameter is missing" },
+        { status: 400 }
+      );
+    }
+
+    const { userId } = auth();
+    if (!userId) {
+      return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+    }
+
+    // Validate course ownership
+    const course = await prisma.course.findUnique({
+      where: { id: courseId },
+    });
+
+    if (!course || course.userId !== userId) {
+      return NextResponse.json(
+        { message: "Unauthorized to modify this course" },
+        { status: 403 }
+      );
+    }
+
+    const { title, description, videoUrl, isFree, isPublished } =
+      await request.json();
+
+    // Fetch and update the chapter
+    const updatedChapter = await prisma.chapter.update({
+      where: { id: chapterId },
+      data: {
+        title: title || undefined,
+        description: description || undefined,
+        videoUrl: videoUrl || undefined,
+        isFree: isFree ?? undefined,
+        isPublished: isPublished ?? undefined,
+      },
+    });
 
     return NextResponse.json(updatedChapter, { status: 200 });
   } catch (error) {
-    console.error("Error updating Course chapter:", error);
+    console.error("Error updating chapter:", error);
     return NextResponse.json(
-      { message: "Something went wrong. Failed to update Course chapter." },
+      { message: "Something went wrong while updating the chapter." },
       { status: 500 }
     );
   }

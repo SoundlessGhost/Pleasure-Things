@@ -1,0 +1,46 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Course {
+  id          String     @id @default(uuid())
+  userId      String
+  title       String
+  description String
+  courseImage String?
+  price       Float
+  category    String
+  isPublished Boolean    @default(false)
+  isPurchase  Boolean    @default(false)
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  chapters    Chapter[]
+  attachments Attachment[]
+}
+
+model Chapter {
+  id          String   @id @default(uuid())
+  title       String
+  courseId    String
+  description String?
+  videoUrl    String?
+  isFree      Boolean  @default(false)
+  isPublished Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  course      Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+}
+
+model Attachment {
+  id          String   @id @default(uuid())
+  courseId    String
+  attachment  String 
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  course      Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+}
