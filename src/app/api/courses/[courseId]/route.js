@@ -36,6 +36,9 @@ export async function GET(request, { params }) {
 
 export async function PATCH(request, { params }) {
   try {
+    console.log("Request Params:", params);
+    console.log("Request Headers:", request.headers);
+
     const { userId } = auth();
     if (!userId) {
       return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
@@ -50,6 +53,15 @@ export async function PATCH(request, { params }) {
     }
 
     const body = await request.json();
+    console.log("Request Body:", body);
+
+    if (!body.description) {
+      return NextResponse.json(
+        { message: "Description is missing" },
+        { status: 400 }
+      );
+    }
+
     const course = await prisma.course.findUnique({
       where: { id: courseId },
     });
@@ -64,13 +76,7 @@ export async function PATCH(request, { params }) {
     const updatedCourse = await prisma.course.update({
       where: { id: courseId },
       data: {
-        title: body.title ?? course.title,
-        description: body.description ?? course.description,
-        courseImage: body.courseImage ?? course.courseImage,
-        price: body.price ?? course.price,
-        category: body.category ?? course.category,
-        isPublished: body.isPublished ?? course.isPublished,
-        isPurchase: body.isPurchase ?? course.isPurchase,
+        description: body.description,
       },
     });
 
@@ -83,6 +89,7 @@ export async function PATCH(request, { params }) {
     );
   }
 }
+
 
 export async function DELETE(request, { params }) {
   try {

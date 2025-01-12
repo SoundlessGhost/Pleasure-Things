@@ -19,10 +19,10 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Loader2, Pencil } from "lucide-react";
 
-const CategoryForm = ({ courseId, value }) => {
+const CategoryForm = ({ courseId, course }) => {
   const [loading, setLoading] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
-  const [CourseCategory, setCourseCategory] = useState(value.category);
+  const [CourseCategory, setCourseCategory] = useState(course.category);
 
   const router = useRouter();
   const toggleEdit = () => setIsEditing((current) => !current);
@@ -37,7 +37,7 @@ const CategoryForm = ({ courseId, value }) => {
       });
       setIsEditing(false);
 
-      value.category = CourseCategory;
+      course.category = CourseCategory;
 
       toast.success("Category Updated");
       router.refresh();
@@ -67,7 +67,7 @@ const CategoryForm = ({ courseId, value }) => {
 
       {isEditing ? (
         <>
-          <Select onValueChange={(value) => setCourseCategory(value)}>
+          <Select onValueChange={(course) => setCourseCategory(course)}>
             <SelectTrigger className="w-full mt-2">
               <SelectValue placeholder="Select a category" />
             </SelectTrigger>
@@ -96,7 +96,7 @@ const CategoryForm = ({ courseId, value }) => {
           </Button>
         </>
       ) : (
-        <p className="text-slate-600 text-sm">{value.category}</p>
+        <p className="text-slate-600 text-sm">{course.category}</p>
       )}
     </div>
   );

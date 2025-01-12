@@ -11,10 +11,10 @@ import { useRouter } from "next/navigation";
 import { Loader2, Pencil } from "lucide-react";
 import { UploadDropzone } from "@/lib/uploadthing";
 
-const ImageForm = ({ courseId, value }) => {
+const ImageForm = ({ courseId, course }) => {
   const [loading, setLoading] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
-  const [imageUrl, setImageUrl] = useState(value.courseImage);
+  const [imageUrl, setImageUrl] = useState(course.courseImage);
 
   const router = useRouter();
   const toggleEdit = () => setIsEditing((current) => !current);
@@ -41,7 +41,7 @@ const ImageForm = ({ courseId, value }) => {
     try {
       await axios.patch(`/api/courses/${courseId}`, { courseImage: imageUrl });
 
-      value.courseImage = imageUrl;
+      course.courseImage = imageUrl;
       setIsEditing(false);
 
       toast.success("Image Updated");

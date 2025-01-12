@@ -1,69 +1,79 @@
-"use client";
+"use client"
 import axios from "axios";
 import toast from "react-hot-toast";
 import CourseForm from "./_components/CourseForm";
-import useSingleCourse from "@/hooks/useSingleCourse";
 
-import { useAuth } from "@clerk/nextjs";
-import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { UnpublishedBanner } from "@/components/Banner";
 import { ConfirmModel } from "@/components/ConfirmModel";
-import { LayoutDashboard, Loader2, Trash } from "lucide-react";
 
 const CourseIdPage = ({ params }) => {
-  const { userId } = useAuth();
-  const { course, refetch } = useSingleCourse(params.courseId);
-
+  const [course, setCourse] = useState(null);
   const [loading, setLoading] = useState(false);
   const [loadingPublish, setLoadingPublish] = useState(false);
 
   const router = useRouter();
 
+  // Fetch course details
   useEffect(() => {
-    if (!userId && !course) {
-      router.push("/");
-    }
-  }, [userId, router, course]);
+    const fetchCourse = async () => {
+      try {
+        setLoading(true);
+        const res = await axios.get(`/api/courses/${params.courseId}`);
+        setCourse(res.data);
+      } catch (error) {
+        router.push("/");
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  // Course Published Function
+    fetchCourse();
+  }, [params.courseId, router]);
 
-  const onPublished = async () => {
+  if (loading) {
+    return <p className="text-center text-sm pt-6">Loading course data...</p>;
+  }
+
+  if (!course) {
+    return <p className="text-center text-sm pt-6">Course not found.</p>;
+  }
+
+  const handlePublish = async () => {
     setLoadingPublish(true);
     try {
-      const currentPublishedState = course.isPublished;
       await axios.patch(`/api/courses/${params.courseId}`, {
-        isPublished: !currentPublishedState,
+        isPublished: !course.isPublished,
       });
-
-      refetch();
-    } catch (error) {
-      toast.error("Something Went Wrong");
+      setCourse((prev) => ({ ...prev, isPublished: !prev.isPublished }));
+      toast.success(
+        course.isPublished
+          ? "Course unpublished successfully"
+          : "Course published successfully"
+      );
+    } catch {
+      toast.error("Failed to update publish state");
     } finally {
       setLoadingPublish(false);
     }
   };
 
-  // Handle Delete Course Function
-
-  const handleDelete = async (courseId) => {
+  const handleDelete = async () => {
     setLoading(true);
     try {
-      await axios.delete(`/api/courses/${courseId}`);
-
-      toast.success("Course Deleted");
+      await axios.delete(`/api/courses/${params.courseId}`);
+      toast.success("Course deleted successfully");
       router.push("/teacher/courses");
     } catch {
-      toast.error("Something went wrong");
+      toast.error("Failed to delete course");
     } finally {
       setLoading(false);
     }
   };
 
-  // Fields Required Logic
-
-  const requiredFiled = [
+  const requiredFields = [
     course.title,
     course.description,
     course.category,
@@ -71,53 +81,40 @@ const CourseIdPage = ({ params }) => {
     course.price,
   ];
 
-  const totalFields = requiredFiled.length;
-  const completedFields = requiredFiled.filter(Boolean).length;
-  const completionText = `(${completedFields}/${totalFields})`;
-  const isCompleted = requiredFiled.every(Boolean);
+  const totalFields = requiredFields.length;
+  const completedFields = requiredFields.filter(Boolean).length;
+  const isCompleted = completedFields === totalFields;
 
   return (
     <>
-      {course.isPublished ? null : <UnpublishedBanner />}
-
+      {!course.isPublished && <UnpublishedBanner />}
       <div className="p-6 font">
         <div className="flex items-center justify-between">
-          <div className="flex flex-col gap-y-2">
+          <div>
             <h1 className="text-2xl font-medium">Course Creation</h1>
-            <p className=" text-muted-foreground text-xs">
-              Provide your information & complete all fields {completionText}
+            <p className="text-muted-foreground text-xs">
+              Complete all fields ({completedFields}/{totalFields})
             </p>
           </div>
-
           <div className="flex items-center gap-x-2">
             <Button
-              onClick={onPublished}
+              onClick={handlePublish}
               disabled={loadingPublish || !isCompleted}
             >
-              {loadingPublish ? (
-                <Loader2 className="animate-spin" />
-              ) : (
-                <p>{course.isPublished ? "Unpublish" : "Publish"}</p>
-              )}
+              {loadingPublish
+                ? "Loading..."
+                : course.isPublished
+                ? "Unpublish"
+                : "Publish"}
             </Button>
-            <ConfirmModel onConfirm={() => handleDelete(params.courseId)}>
+            <ConfirmModel onConfirm={handleDelete}>
               <Button disabled={loading}>
-                {loading ? (
-                  <Loader2 className="animate-spin" />
-                ) : (
-                  <Trash className="h-4 w-4 " />
-                )}
+                {loading ? "Deleting..." : "Delete"}
               </Button>
             </ConfirmModel>
           </div>
         </div>
-        <div className="flex items-center mb-10 mt-16">
-          <LayoutDashboard />
-          <h2 className=" text-slate-600 text-2xl ml-2">
-            Customize your course
-          </h2>
-        </div>
-        <CourseForm values={course} />
+        <CourseForm course={course} />
       </div>
     </>
   );

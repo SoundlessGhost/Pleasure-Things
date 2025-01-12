@@ -10,10 +10,10 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Loader2, Pencil } from "lucide-react";
 
-const PriceForm = ({ courseId, value }) => {
+const PriceForm = ({ courseId, course }) => {
   const [loading, setLoading] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
-  const [CoursePrice, setCoursePrice] = useState(value.price);
+  const [CoursePrice, setCoursePrice] = useState(course.price);
 
   const router = useRouter();
   const toggleEdit = () => setIsEditing((current) => !current);
@@ -25,7 +25,7 @@ const PriceForm = ({ courseId, value }) => {
     try {
       await axios.patch(`/api/courses/${courseId}`, { price: CoursePrice });
 
-      value.price = CoursePrice;
+      course.price = CoursePrice;
       setIsEditing(false);
 
       toast.success("Price Updated");
@@ -56,10 +56,10 @@ const PriceForm = ({ courseId, value }) => {
         <>
           <Input
             type="number"
-            onChange={(e) => setCoursePrice(e.target.value)}
+            onChange={(e) => setCoursePrice(e.target.course)}
             className="mt-2"
             placeholder="e.g Money"
-            defaultValue={value.price}
+            defaultValue={course.price}
           />
           <Button
             onClick={handleSubmit}
@@ -70,7 +70,7 @@ const PriceForm = ({ courseId, value }) => {
           </Button>
         </>
       ) : (
-        <p className="text-slate-600 text-sm">${value.price}</p>
+        <p className="text-slate-600 text-sm">${course.price}</p>
       )}
     </div>
   );

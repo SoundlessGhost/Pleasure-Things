@@ -10,10 +10,10 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Loader2, Pencil } from "lucide-react";
 
-const TitleForm = ({ courseId, value }) => {
+const TitleForm = ({ courseId, course }) => {
   const [loading, setLoading] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
-  const [CourseTitle, setCourseTitle] = useState(value.title);
+  const [CourseTitle, setCourseTitle] = useState(course.title);
 
   const router = useRouter();
   const toggleEdit = () => setIsEditing((current) => !current);
@@ -25,7 +25,7 @@ const TitleForm = ({ courseId, value }) => {
     try {
       await axios.patch(`/api/courses/${courseId}`, { title: CourseTitle });
 
-      value.title = CourseTitle;
+      course.title = CourseTitle;
       setIsEditing(false);
 
       toast.success("Title Updated");
@@ -55,10 +55,10 @@ const TitleForm = ({ courseId, value }) => {
       {isEditing ? (
         <>
           <Input
-            onChange={(e) => setCourseTitle(e.target.value)}
+            onChange={(e) => setCourseTitle(e.target.course)}
             className="mt-2"
             placeholder="e.g Web Developer"
-            defaultValue={value.title}
+            defaultValue={course.title}
           />
           <Button
             onClick={handleSubmit}
@@ -69,7 +69,7 @@ const TitleForm = ({ courseId, value }) => {
           </Button>
         </>
       ) : (
-        <p className="text-slate-600 text-sm">{value.title}</p>
+        <p className="text-slate-600 text-sm">{course.title}</p>
       )}
     </div>
   );
