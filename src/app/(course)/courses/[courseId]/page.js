@@ -6,10 +6,9 @@ import { Loader2 } from "lucide-react";
 import { redirect } from "next/navigation";
 import { useEffect, useState } from "react";
 
-const WatchCourseIdPage = ({ params }) => {
+const CourseIdPage = ({ params }) => {
   const { courseId } = params;
   const { course } = useSingleCourse(courseId);
-
   const [chapters, setChapters] = useState([]);
 
   // Fetching chapters
@@ -38,7 +37,7 @@ const WatchCourseIdPage = ({ params }) => {
     );
   }
 
-  return redirect(`/courses/${courseId}/chapters/${chapters[0]?._id}`);
+  return redirect(`/courses/${courseId}/chapters/${chapters[0]?.id}`);
 };
 
-export default WatchCourseIdPage;
+export default CourseIdPage;

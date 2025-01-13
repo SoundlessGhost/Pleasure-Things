@@ -21,21 +21,24 @@ const ChapterEditPage = ({ params }) => {
   const { courseId, chapterId } = params;
   const { chapters } = useAllChapters(courseId);
 
+  console.log("All chapter:", chapters);
+
   const [loading, setLoading] = useState(false);
-  const [filteredChapter, setFilteredChapter] = useState(null);
+  const [filteredChapter, setFilteredChapter] = useState({});
 
   // Filter Single Chapter
 
   useEffect(() => {
     if (chapters.length > 0) {
-      const chapter = chapters.find((chapter) => chapter._id === chapterId);
+      const chapter = chapters.find((chapter) => chapter?.id === chapterId);
       console.log("Filtered chapter:", chapter);
 
-      setFilteredChapter(chapter || {}); // Set to empty object if not found
+      setFilteredChapter(chapter);
     }
   }, [chapters, chapterId]);
 
   // Chapter On Published Function
+
   const onPublished = async () => {
     if (!filteredChapter) return;
 

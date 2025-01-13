@@ -5,16 +5,17 @@ import { Lock, PlayCircle } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
 
 const CourseSideBarItems = ({ chapter, courseId }) => {
-  const { title, _id, isFree } = chapter;
+  console.log("chapterId", chapter.id, "courseId", courseId);
+  const { title, id, isFree } = chapter;
 
   const router = useRouter();
   const pathname = usePathname();
 
-  const isActive = pathname.includes(_id);
+  const isActive = pathname.includes(id);
   const Icon = isFree ? <PlayCircle size={20} /> : <Lock size={20} />;
 
   const onClick = () => {
-    router.push(`/courses/${courseId}/chapters/${_id}`);
+    router.push(`/courses/${courseId}/chapters/${id}`);
   };
 
   return (
@@ -27,7 +28,7 @@ const CourseSideBarItems = ({ chapter, courseId }) => {
         )}
       >
         <div className="flex items-center gap-x-2 py-4">
-          {Icon} 
+          {Icon}
           {title}
         </div>
 

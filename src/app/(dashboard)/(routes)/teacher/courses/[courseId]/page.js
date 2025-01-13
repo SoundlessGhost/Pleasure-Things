@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { UnpublishedBanner } from "@/components/Banner";
 import { ConfirmModel } from "@/components/ConfirmModel";
 import { Loader2 } from "lucide-react";
+import useAllChapters from "@/hooks/useAllChapters";
 
 const CourseIdPage = ({ params }) => {
   const [course, setCourse] = useState(null);
@@ -16,8 +17,12 @@ const CourseIdPage = ({ params }) => {
   const [loadingPublish, setLoadingPublish] = useState(false);
 
   const router = useRouter();
+  const { chapters } = useAllChapters(params.courseId);
+
+  // TODO Please 1 chapters adds otherwise not publish
 
   // Fetch course details
+
   useEffect(() => {
     const fetchCourse = async () => {
       try {
@@ -101,7 +106,7 @@ const CourseIdPage = ({ params }) => {
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-2xl font-medium">Course Creation</h1>
-            <p className="text-muted-foreground text-xs">
+            <p className="text-muted-foreground text-xs mb-2">
               Complete all fields ({completedFields}/{totalFields})
             </p>
           </div>

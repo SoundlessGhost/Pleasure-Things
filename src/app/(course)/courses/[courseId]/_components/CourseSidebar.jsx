@@ -15,6 +15,7 @@ import { BookOpen, Ellipsis } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 
 const CourseSidebar = ({ course, chapters }) => {
+  console.log("course", course, "chapters", chapters);
   return (
     <div className="h-full border-r flex flex-col overflow-y-auto shadow-sm font">
       <div className="p-8 border-b">
@@ -34,7 +35,7 @@ const CourseSidebar = ({ course, chapters }) => {
         {chapters.map((chapter, i) => (
           <div key={i} className="flex flex-col w-full">
             {course.isPublished && (
-              <CourseSideBarItems chapter={chapter} courseId={course._id} />
+              <CourseSideBarItems chapter={chapter} courseId={course.id} />
             )}
           </div>
         ))}

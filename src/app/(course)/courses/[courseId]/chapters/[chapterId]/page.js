@@ -1,4 +1,5 @@
 "use client";
+
 import Link from "next/link";
 import Image from "next/image";
 import Preview from "@/components/Preview";
@@ -23,7 +24,7 @@ const ChaptersIdPage = ({ params }) => {
     <div className="w-full flex items-center justify-center mt-8">
       <Loader2 className="h-6 w-6 animate-spin" />
     </div>;
-  } 
+  }
 
   const isPurchase = false;
   const isLock = !chapter?.isFree;
@@ -82,26 +83,28 @@ const ChaptersIdPage = ({ params }) => {
               )}
             </div>
 
-            {isPurchase ? (
-              <>
-                <Separator />
-                <Preview value={chapter.description} />
-                <Separator />
+            {/* TODO isPurchase or Not */}
 
-                {attachment?.attachment && (
-                  <div className="flex items-center p-4 w-full bg-slate-300 text-muted-foreground gap-x-2 mt-3">
-                    <File className="h-4 w-4" />
-                    <a
-                      href={attachment?.attachment}
-                      target="_blank"
-                      className="text-xs line-clamp-1"
-                    >
-                      {attachment?.attachment}
-                    </a>
-                  </div>
-                )}
-              </>
-            ) : null}
+            {/* {isPurchase && ( */}
+            <>
+              <Separator />
+              <Preview value={chapter.description} />
+              <Separator />
+
+              {attachment?.attachment && (
+                <div className="flex items-center p-4 w-full bg-slate-300 text-muted-foreground gap-x-2 mt-3">
+                  <File className="h-4 w-4" />
+                  <a
+                    href={attachment?.attachment}
+                    target="_blank"
+                    className="text-xs line-clamp-1"
+                  >
+                    {attachment?.attachment}
+                  </a>
+                </div>
+              )}
+            </>
+            {/* )} */}
           </div>
         </div>
 
@@ -123,7 +126,7 @@ const ChaptersIdPage = ({ params }) => {
           )}
 
           <Link
-            href={"https://github.com/SoundlessGhost/Squad-Ring-LMS-"}
+            href={"https://github.com/SoundlessGhost"}
             target="_blank"
           >
             <div className="p-4 my-4 flex flex-col border bg-white rounded-md items-center justify-center">

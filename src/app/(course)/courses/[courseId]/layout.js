@@ -7,18 +7,23 @@ import CourseSidebar from "./_components/CourseSidebar";
 
 import { useAuth } from "@clerk/nextjs";
 import { redirect } from "next/navigation";
+import { Loader2 } from "lucide-react";
 
 const CourseLayout = ({ children, params }) => {
   const { userId } = useAuth();
-  const { course } = useSingleCourse(params.courseId);
+  const { course, isLoading } = useSingleCourse(params.courseId);
   const { chapters } = useAllChapters(params.courseId);
 
   if (!userId) {
     return redirect("/sign-in");
   }
 
-  if (!course) {
-    return redirect("/");
+  if (isLoading) {
+    return (
+      <div className="w-full mt-10 flex items-center justify-center">
+        <Loader2 className="h-6 w-6 animate-spin" />
+      </div>
+    );
   }
 
   return (
@@ -35,5 +40,4 @@ const CourseLayout = ({ children, params }) => {
     </div>
   );
 };
-
 export default CourseLayout;

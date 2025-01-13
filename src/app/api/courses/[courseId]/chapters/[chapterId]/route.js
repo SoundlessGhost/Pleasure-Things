@@ -87,11 +87,11 @@ export async function PATCH(request, { params }) {
     const updatedChapter = await prisma.chapter.update({
       where: { id: chapterId },
       data: {
-        title: title || undefined,
-        description: description || undefined,
-        videoUrl: videoUrl || undefined,
-        isFree: isFree ?? undefined,
-        isPublished: isPublished ?? undefined,
+        title: title,
+        description: description,
+        videoUrl: videoUrl,
+        isFree: isFree,
+        isPublished: isPublished,
       },
     });
 

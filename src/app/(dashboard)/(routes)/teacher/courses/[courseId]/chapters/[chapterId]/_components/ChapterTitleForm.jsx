@@ -15,6 +15,8 @@ const TitleForm = ({ courseId, value, chapterId }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [CourseTitle, setCourseTitle] = useState(value.title);
 
+  console.log(CourseTitle, "CourseTitle");
+
   const router = useRouter();
   const toggleEdit = () => setIsEditing((current) => !current);
 
