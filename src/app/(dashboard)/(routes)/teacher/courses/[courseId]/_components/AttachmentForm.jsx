@@ -46,14 +46,15 @@ const AttachmentForm = ({ courseId }) => {
       const response = await axios.post(`/api/courses/${courseId}/attachment`, {
         attachment: CourseAttachment,
       });
-      toast.success("Attachment Updated");
 
+      toast.success("Description Updated");
       setInitialData(response.data);
-      setIsEditing(false);
+      setIsEditing(false); // Exit editing mode
 
-      router.refresh();
-    } catch {
-      toast.error("Something went wrong");
+      router.refresh(); // Refresh the page to sync with the server data
+    } catch (error) {
+      console.error("Error in handleSubmit:", error);
+      toast.error("Something Went Wrong");
     } finally {
       setLoading(false);
     }
@@ -61,22 +62,25 @@ const AttachmentForm = ({ courseId }) => {
 
   // Handle Delete Attachment Function
 
-  const handleDelete = async (attachmentId) => {
-    setLoading(true);
-    try {
-      await axios.delete(`/api/courses/${attachmentId}/attachment`);
-      toast.success("Attachment Deleted");
+ const handleDelete = async (attachmentId) => {
+   setLoading(true);
+   try {
+     console.log("Deleting attachment with ID:", attachmentId); // Debugging log
+     await axios.delete(`/api/courses/${courseId}/attachment/${attachmentId}`);
 
-      setCourseAttachment(null);
-      setInitialData({});
+     toast.success("Attachment Deleted");
 
-      router.refresh();
-    } catch {
-      toast.error("Something went wrong");
-    } finally {
-      setLoading(false);
-    }
-  };
+     setCourseAttachment(null); // Clear the attachment in state
+     setInitialData({}); // Clear the initial data
+     router.refresh(); // Refresh the UI to reflect the deletion
+   } catch (error) {
+     console.error("Error in handleDelete:", error.response || error.message); // Log detailed error
+     toast.error("Something went wrong while deleting the attachment");
+   } finally {
+     setLoading(false);
+   }
+ };
+
 
   if (!courseId) {
     return (
@@ -142,7 +146,7 @@ const AttachmentForm = ({ courseId }) => {
             ) : (
               <X
                 className="h-4 w-4 cursor-pointer"
-                onClick={() => handleDelete(initialData._id)}
+                onClick={() => handleDelete(initialData.id)}
               />
             )}
           </div>

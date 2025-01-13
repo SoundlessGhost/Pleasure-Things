@@ -23,14 +23,17 @@ const TitleForm = ({ courseId, course }) => {
   const handleSubmit = async () => {
     setLoading(true);
     try {
-      await axios.patch(`/api/courses/${courseId}`, { title: CourseTitle });
-
-      course.title = CourseTitle;
-      setIsEditing(false);
+      await axios.patch(`/api/courses/${courseId}`, {
+        title: CourseTitle,
+      });
 
       toast.success("Title Updated");
-      router.refresh();
-    } catch {
+      setIsEditing(false); // Exit editing mode
+
+      course.title = CourseTitle; // Update the prop object locally
+      router.refresh(); // Refresh the page to sync with the server data
+    } catch (error) {
+      console.error("Error in handleSubmit:", error);
       toast.error("Something Went Wrong");
     } finally {
       setLoading(false);
@@ -55,7 +58,7 @@ const TitleForm = ({ courseId, course }) => {
       {isEditing ? (
         <>
           <Input
-            onChange={(e) => setCourseTitle(e.target.course)}
+            onChange={(e) => setCourseTitle(e.target.value)}
             className="mt-2"
             placeholder="e.g Web Developer"
             defaultValue={course.title}

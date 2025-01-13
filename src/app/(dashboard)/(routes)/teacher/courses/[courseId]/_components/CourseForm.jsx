@@ -39,7 +39,7 @@ const CourseForm = ({ course }) => {
           <FileCheck2 /> Resources & Attachment
         </h2>
 
-        <AttachmentForm courseId={course.id} />
+        <AttachmentForm courseId={course.id} course={course} />
       </div>
     </div>
   );

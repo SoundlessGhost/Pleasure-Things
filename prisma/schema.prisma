@@ -13,7 +13,7 @@ model Course {
   title       String
   description String
   courseImage String?
-  price       Float
+  price       String
   category    String
   isPublished Boolean    @default(false)
   isPurchase  Boolean    @default(false)

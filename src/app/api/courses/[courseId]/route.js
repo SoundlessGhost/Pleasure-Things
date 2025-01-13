@@ -1,14 +1,14 @@
 import prisma from "@/lib/prisma";
+
 import { NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 
 export async function GET(request, { params }) {
   try {
     const { courseId } = params;
-
     if (!courseId) {
       return NextResponse.json(
-        { message: "ID parameter is missing" },
+        { message: "Bad Request: Course ID parameter is missing" },
         { status: 400 }
       );
     }
@@ -19,7 +19,7 @@ export async function GET(request, { params }) {
 
     if (!course) {
       return NextResponse.json(
-        { message: "Course not found" },
+        { message: "Not Found: Course not found for the given course" },
         { status: 404 }
       );
     }
@@ -36,28 +36,18 @@ export async function GET(request, { params }) {
 
 export async function PATCH(request, { params }) {
   try {
-    console.log("Request Params:", params);
-    console.log("Request Headers:", request.headers);
-
     const { userId } = auth();
     if (!userId) {
-      return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+      return NextResponse.json(
+        { message: "Unauthorized: User not authenticated" },
+        { status: 401 }
+      );
     }
 
     const { courseId } = params;
     if (!courseId) {
       return NextResponse.json(
-        { message: "ID parameter is missing" },
-        { status: 400 }
-      );
-    }
-
-    const body = await request.json();
-    console.log("Request Body:", body);
-
-    if (!body.description) {
-      return NextResponse.json(
-        { message: "Description is missing" },
+        { message: "Bad Request: ID parameter is missing" },
         { status: 400 }
       );
     }
@@ -68,15 +58,28 @@ export async function PATCH(request, { params }) {
 
     if (!course || course.userId !== userId) {
       return NextResponse.json(
-        { message: "Unauthorized or course not found" },
+        { message: "Unauthorized: User not matched" },
         { status: 401 }
+      );
+    }
+
+    const body = await request.json();
+    if (!body) {
+      return NextResponse.json(
+        { message: "Bad Request: Body is missing" },
+        { status: 400 }
       );
     }
 
     const updatedCourse = await prisma.course.update({
       where: { id: courseId },
       data: {
+        title: body.title,
+        price: body.price,
+        category: body.category,
+        courseImage: body.courseImage,
         description: body.description,
+        isPublished: body.isPublished,
       },
     });
 
@@ -90,18 +93,20 @@ export async function PATCH(request, { params }) {
   }
 }
 
-
 export async function DELETE(request, { params }) {
   try {
     const { userId } = auth();
     if (!userId) {
-      return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+      return NextResponse.json(
+        { message: "Unauthorized: User not authenticated" },
+        { status: 401 }
+      );
     }
 
     const { courseId } = params;
     if (!courseId) {
       return NextResponse.json(
-        { message: "ID parameter is missing" },
+        { message: "Bad Request: Course ID parameter is missing" },
         { status: 400 }
       );
     }
@@ -112,7 +117,7 @@ export async function DELETE(request, { params }) {
 
     if (!course || course.userId !== userId) {
       return NextResponse.json(
-        { message: "Unauthorized or course not found" },
+        { message: "Unauthorized: User not matched" },
         { status: 401 }
       );
     }

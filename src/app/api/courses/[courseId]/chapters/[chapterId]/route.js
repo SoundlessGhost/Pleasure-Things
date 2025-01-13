@@ -69,7 +69,6 @@ export async function PATCH(request, { params }) {
       return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
     }
 
-    // Validate course ownership
     const course = await prisma.course.findUnique({
       where: { id: courseId },
     });
@@ -101,6 +100,57 @@ export async function PATCH(request, { params }) {
     console.error("Error updating chapter:", error);
     return NextResponse.json(
       { message: "Something went wrong while updating the chapter." },
+      { status: 500 }
+    );
+  }
+}
+
+export async function DELETE(request, { params }) {
+  try {
+    const { userId } = auth();
+    if (!userId) {
+      return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+    }
+
+    const { chapterId } = params;
+    if (!chapterId) {
+      return NextResponse.json(
+        { message: "Chapter ID parameter is missing" },
+        { status: 400 }
+      );
+    }
+
+    // Find the chapter and verify ownership
+    const chapter = await prisma.chapter.findUnique({
+      where: { id: chapterId },
+      include: { course: true },
+    });
+
+    if (!chapter) {
+      return NextResponse.json(
+        { message: "Chapter not found" },
+        { status: 404 }
+      );
+    }
+
+    if (chapter.course.userId !== userId) {
+      return NextResponse.json(
+        { message: "Unauthorized to delete this chapter" },
+        { status: 403 }
+      );
+    }
+
+    // Delete the chapter
+    await prisma.chapter.delete({ where: { id: chapterId } });
+
+    return NextResponse.json(
+      { message: "Chapter deleted successfully" },
+      { status: 200 }
+    );
+  } catch (error) {
+    console.error("Error deleting chapter:", error);
+    return NextResponse.json(
+      { message: "Something went wrong while deleting the chapter." },
       { status: 500 }
     );
   }

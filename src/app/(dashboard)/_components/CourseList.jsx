@@ -7,6 +7,7 @@ import { BookOpen } from "lucide-react";
 import { useEffect, useState } from "react";
 
 const CourseList = ({ courses }) => {
+  console.log("Information",courses);
   const [chapters, setChapters] = useState([]);
 
   // Fetching Chapters Length Function
@@ -38,7 +39,7 @@ const CourseList = ({ courses }) => {
             {/* Render Course Information When isPublished is True */}
 
             {course.isPublished && (
-              <Link key={i} href={`/courses/${course._id}`}>
+              <Link key={i} href={`/courses/${course.id}`}>
                 <div className="group hover:shadow-md transition rounded-lg p-3 border h-full overflow-hidden">
                   <div className="aspect-video relative rounded-md w-full overflow-hidden">
                     <Image

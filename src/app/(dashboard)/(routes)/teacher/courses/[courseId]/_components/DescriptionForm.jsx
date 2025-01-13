@@ -13,32 +13,34 @@ import { Loader2, Pencil } from "lucide-react";
 const DescriptionForm = ({ courseId, course }) => {
   const [loading, setLoading] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
-  const [CourseDescription, setCourseDescription] = useState(course.description);
+  const [courseDescription, setCourseDescription] = useState(
+    course.description
+  );
 
   const router = useRouter();
   const toggleEdit = () => setIsEditing((current) => !current);
 
   // Handle Patch Course Description Function
 
- const handleSubmit = async () => {
-   setLoading(true);
-   try {
-     console.log("Submitting update request...", courseId);
-     const response = await axios.patch(`/api/courses/${courseId}`, {
-       description: CourseDescription,
-     });
-     console.log("Update response:", response.data);
+  const handleSubmit = async () => {
+    setLoading(true);
+    try {
+      await axios.patch(`/api/courses/${courseId}`, {
+        description: courseDescription,
+      });
 
-     toast.success("Description Updated");
-     router.refresh();
-   } catch (error) {
-     console.error("Error in handleSubmit:", error);
-     toast.error("Something Went Wrong");
-   } finally {
-     setLoading(false);
-   }
- };
-
+      toast.success("Description Updated");
+      setIsEditing(false); // Exit editing mode
+      
+      course.description = courseDescription; // Update the prop object locally
+      router.refresh(); // Refresh the page to sync with the server data
+    } catch (error) {
+      console.error("Error in handleSubmit:", error);
+      toast.error("Something Went Wrong");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="bg-slate-200 p-4 rounded-md">
@@ -65,7 +67,7 @@ const DescriptionForm = ({ courseId, course }) => {
           />
           <Button
             onClick={handleSubmit}
-            disabled={!CourseDescription || loading}
+            disabled={!courseDescription || loading}
             className={"mt-4 w-24"}
           >
             {loading ? <Loader2 className="animate-spin" /> : "Save"}

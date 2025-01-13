@@ -41,7 +41,7 @@ export async function POST(request) {
       title,
       description = "",
       courseImage = "",
-      price = 0,
+      price = "",
       category = "",
       isPublished = false,
       isPurchase = false,

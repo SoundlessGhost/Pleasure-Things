@@ -1,4 +1,5 @@
 "use client";
+import { Loader2 } from "lucide-react";
 import { useAuth } from "@clerk/nextjs";
 import { isTeacher } from "@/lib/Teacher";
 import { redirect } from "next/navigation";
@@ -15,7 +16,11 @@ const TeacherLayout = ({ children }) => {
   }, [userId]);
 
   if (loading) {
-    return <p>Loading...</p>;
+    return (
+      <div className="w-full flex items-center justify-center mt-8">
+        <Loader2 className="h-6 w-6 animate-spin" />
+      </div>
+    );
   }
 
   if (!isTeacher(userId)) {

@@ -1,8 +1,8 @@
 import prisma from "@/lib/prisma";
+
 import { NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 
-// GET: Fetch attachment by courseId
 export async function GET(request, { params }) {
   try {
     const { courseId } = params;
@@ -34,12 +34,14 @@ export async function GET(request, { params }) {
   }
 }
 
-// POST: Create a new attachment for the given courseId
 export async function POST(request, { params }) {
   try {
     const { userId } = auth();
     if (!userId) {
-      return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+      return NextResponse.json(
+        { message: "Unauthorized: User not authenticated" },
+        { status: 401 }
+      );
     }
 
     const { courseId } = params;
@@ -50,17 +52,18 @@ export async function POST(request, { params }) {
       );
     }
 
-    const { attachment } = await request.json();
-
     const courseOwner = await prisma.course.findUnique({
       where: { id: courseId },
     });
+
     if (!courseOwner) {
       return NextResponse.json(
         { message: "Unauthorized: User is not the owner of the course" },
         { status: 401 }
       );
     }
+
+    const { attachment } = await request.json();
 
     const newCourseAttachment = await prisma.attachment.create({
       data: {
@@ -79,7 +82,6 @@ export async function POST(request, { params }) {
   }
 }
 
-// DELETE: Delete attachment by attachment ID
 export async function DELETE(request, { params }) {
   try {
     const { userId } = auth();
@@ -101,6 +103,7 @@ export async function DELETE(request, { params }) {
     const deleteAttachment = await prisma.attachment.delete({
       where: { id: attachmentId },
     });
+    
     if (!deleteAttachment) {
       return NextResponse.json(
         { message: "Not Found: Attachment not found" },

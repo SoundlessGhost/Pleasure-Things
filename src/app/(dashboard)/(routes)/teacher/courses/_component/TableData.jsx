@@ -100,7 +100,7 @@ export const columns = [
   {
     id: "actions",
     cell: ({ row }) => {
-      const { _id } = row.original;
+      const { id } = row.original;
       return (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -112,7 +112,7 @@ export const columns = [
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <Link href={`/teacher/courses/${_id}`}>
+            <Link href={`/teacher/courses/${id}`}>
               <DropdownMenuItem className="font cursor-pointer">
                 <FolderCog className="h-4 w-4 mr-2" />
                 Edit

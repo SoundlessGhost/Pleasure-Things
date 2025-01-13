@@ -39,14 +39,17 @@ const ImageForm = ({ courseId, course }) => {
   const handleSubmit = async () => {
     setLoading(true);
     try {
-      await axios.patch(`/api/courses/${courseId}`, { courseImage: imageUrl });
+      await axios.patch(`/api/courses/${courseId}`, {
+        courseImage: imageUrl,
+      });
 
-      course.courseImage = imageUrl;
-      setIsEditing(false);
-
-      toast.success("Image Updated");
-      router.refresh();
-    } catch {
+      toast.success("Description Updated");
+      setIsEditing(false); // Exit editing mode
+      
+      course.courseImage = imageUrl; // Update the prop object locally
+      router.refresh(); // Refresh the page to sync with the server data
+    } catch (error) {
+      console.error("Error in handleSubmit:", error);
       toast.error("Something Went Wrong");
     } finally {
       setLoading(false);

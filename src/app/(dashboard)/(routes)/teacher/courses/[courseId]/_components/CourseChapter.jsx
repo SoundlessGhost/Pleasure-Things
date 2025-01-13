@@ -75,15 +75,15 @@ const CourseChapter = ({ courseId }) => {
   const handleDelete = async (chapterId) => {
     setDeleteLoading(true);
     try {
-      await axios.delete(`/api/courses/${chapterId}/chapters`);
-
-      setInitialData((prevChapterTitle) =>
-        prevChapterTitle.filter((chapter) => chapter._id !== chapterId)
+      await axios.delete(`/api/courses/${courseId}/chapters/${chapterId}`);
+      setInitialData((prev) =>
+        prev.filter((chapter) => chapter.id !== chapterId)
       );
 
       toast.success("Chapter Deleted");
       router.refresh();
-    } catch {
+    } catch (err) {
+      console.error("Delete Error:", err);
       toast.error("Something went wrong");
     } finally {
       setDeleteLoading(false);
@@ -151,7 +151,7 @@ const CourseChapter = ({ courseId }) => {
                 <div key={i} className="mt-2 rounded-md">
                   <div className="flex items-center justify-between p-3 w-full bg-white text-muted-foreground rounded-md">
                     <div className="flex items-center gap-x-2">
-                      <ConfirmModel onConfirm={() => handleDelete(data._id)}>
+                      <ConfirmModel onConfirm={() => handleDelete(data.id)}>
                         {deleteLoading ? (
                           <Loader2 className="animate-spin" />
                         ) : (
@@ -186,7 +186,7 @@ const CourseChapter = ({ courseId }) => {
 
                       <Pencil
                         className="h-3 w-3 cursor-pointer text-black"
-                        onClick={() => onEdit(data._id)}
+                        onClick={() => onEdit(data.id)}
                       />
                     </div>
                   </div>

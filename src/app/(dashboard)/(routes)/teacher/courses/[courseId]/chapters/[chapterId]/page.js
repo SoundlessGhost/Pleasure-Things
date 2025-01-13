@@ -22,20 +22,23 @@ const ChapterEditPage = ({ params }) => {
   const { chapters } = useAllChapters(courseId);
 
   const [loading, setLoading] = useState(false);
-  const [filteredChapter, setFilteredChapter] = useState({});
+  const [filteredChapter, setFilteredChapter] = useState(null);
 
-  // Filter Single Chapter Some Issue That's Why Filter Like That
+  // Filter Single Chapter
 
   useEffect(() => {
     if (chapters.length > 0) {
       const chapter = chapters.find((chapter) => chapter._id === chapterId);
-      setFilteredChapter(chapter);
+      console.log("Filtered chapter:", chapter);
+
+      setFilteredChapter(chapter || {}); // Set to empty object if not found
     }
   }, [chapters, chapterId]);
 
   // Chapter On Published Function
-
   const onPublished = async () => {
+    if (!filteredChapter) return;
+
     setLoading(true);
     try {
       const currentPublishedState = filteredChapter.isPublished;
@@ -57,11 +60,10 @@ const ChapterEditPage = ({ params }) => {
   };
 
   // Fields Required Logic
-
   const requiredFiled = [
-    filteredChapter.title,
-    filteredChapter.description,
-    filteredChapter.videoUrl,
+    filteredChapter?.title,
+    filteredChapter?.description,
+    filteredChapter?.videoUrl,
   ];
 
   const totalFields = requiredFiled.length;
@@ -69,7 +71,14 @@ const ChapterEditPage = ({ params }) => {
   const completionText = `(${completedFields}/${totalFields})`;
   const isCompleted = requiredFiled.every(Boolean);
 
-  // TODO : videoUrl & almost 1 chapter add otherwise not published
+  // Render a loading state if data is not ready
+  if (!filteredChapter) {
+    return (
+      <div className="w-full flex items-center justify-center mt-8">
+        <Loader2 className="h-6 w-6 animate-spin" />
+      </div>
+    );
+  }
 
   return (
     <>
@@ -107,7 +116,6 @@ const ChapterEditPage = ({ params }) => {
         </div>
 
         {/* Render Customize chapter Components */}
-
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-16 ">
           <div>
             <div className="flex items-center gap-x-2 mb-10">

@@ -12,7 +12,6 @@ import { Button } from "@/components/ui/button";
 import { LockBanner } from "@/components/Banner";
 import { File, Loader2, Lock } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
-import { redirect } from "next/navigation";
 
 const ChaptersIdPage = ({ params }) => {
   const { courseId, chapterId } = params;
@@ -21,7 +20,9 @@ const ChaptersIdPage = ({ params }) => {
   const { chapter } = useSingleChapter(courseId, chapterId);
 
   if (!chapter || !course) {
-    <p>loading...</p>;
+    <div className="w-full flex items-center justify-center mt-8">
+      <Loader2 className="h-6 w-6 animate-spin" />
+    </div>;
   } 
 
   const isPurchase = false;

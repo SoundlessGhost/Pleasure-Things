@@ -22,7 +22,7 @@ import { Loader2, Pencil } from "lucide-react";
 const CategoryForm = ({ courseId, course }) => {
   const [loading, setLoading] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
-  const [CourseCategory, setCourseCategory] = useState(course.category);
+  const [courseCategory, setCourseCategory] = useState(course.category);
 
   const router = useRouter();
   const toggleEdit = () => setIsEditing((current) => !current);
@@ -33,15 +33,16 @@ const CategoryForm = ({ courseId, course }) => {
     setLoading(true);
     try {
       await axios.patch(`/api/courses/${courseId}`, {
-        category: CourseCategory,
+        category: courseCategory,
       });
-      setIsEditing(false);
-
-      course.category = CourseCategory;
 
       toast.success("Category Updated");
-      router.refresh();
-    } catch {
+      setIsEditing(false); // Exit editing mode
+      
+      course.category = courseCategory; // Update the prop object locally
+      router.refresh(); // Refresh the page to sync with the server data
+    } catch (error) {
+      console.error("Error in handleSubmit:", error);
       toast.error("Something Went Wrong");
     } finally {
       setLoading(false);
@@ -89,7 +90,7 @@ const CategoryForm = ({ courseId, course }) => {
 
           <Button
             onClick={handleSubmit}
-            disabled={!CourseCategory || loading}
+            disabled={!courseCategory || loading}
             className={"mt-4 w-24"}
           >
             {loading ? <Loader2 className="animate-spin" /> : "Save"}

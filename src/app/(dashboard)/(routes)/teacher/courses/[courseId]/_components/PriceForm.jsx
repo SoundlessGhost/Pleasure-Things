@@ -23,14 +23,17 @@ const PriceForm = ({ courseId, course }) => {
   const handleSubmit = async () => {
     setLoading(true);
     try {
-      await axios.patch(`/api/courses/${courseId}`, { price: CoursePrice });
-
-      course.price = CoursePrice;
-      setIsEditing(false);
+      await axios.patch(`/api/courses/${courseId}`, {
+        price: CoursePrice,
+      });
 
       toast.success("Price Updated");
-      router.refresh();
-    } catch {
+      setIsEditing(false); // Exit editing mode
+      
+      course.price = CoursePrice; // Update the prop object locally
+      router.refresh(); // Refresh the page to sync with the server data
+    } catch (error) {
+      console.error("Error in handleSubmit:", error);
       toast.error("Something Went Wrong");
     } finally {
       setLoading(false);
@@ -56,7 +59,7 @@ const PriceForm = ({ courseId, course }) => {
         <>
           <Input
             type="number"
-            onChange={(e) => setCoursePrice(e.target.course)}
+            onChange={(e) => setCoursePrice(e.target.value)}
             className="mt-2"
             placeholder="e.g Money"
             defaultValue={course.price}

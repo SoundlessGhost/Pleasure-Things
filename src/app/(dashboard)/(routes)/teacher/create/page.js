@@ -25,7 +25,7 @@ const CreatePage = () => {
       title: CourseTitle,
       description: "",
       courseImage: "",
-      price: 0,
+      price: "",
       category: "",
       isPublished: false,
       isPurchase: false,
@@ -37,7 +37,7 @@ const CreatePage = () => {
       router.push(`/teacher/courses/${res.data.id}`); // Redirect to the created course page
       toast.success("Course Created");
     } catch (error) {
-      toast.error("Something Went Wrong");
+      toast.error("Something Went Wrong",error);
     } finally {
       setLoading(false);
     }

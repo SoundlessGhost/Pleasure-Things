@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import axios from "axios";
 import toast from "react-hot-toast";
 import CourseForm from "./_components/CourseForm";
@@ -8,6 +8,7 @@ import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { UnpublishedBanner } from "@/components/Banner";
 import { ConfirmModel } from "@/components/ConfirmModel";
+import { Loader2 } from "lucide-react";
 
 const CourseIdPage = ({ params }) => {
   const [course, setCourse] = useState(null);
@@ -34,11 +35,19 @@ const CourseIdPage = ({ params }) => {
   }, [params.courseId, router]);
 
   if (loading) {
-    return <p className="text-center text-sm pt-6">Loading course data...</p>;
-  }
+    return (
+      <div className="w-full mt-10 flex items-center justify-center">
+        <Loader2 className="h-6 w-6 animate-spin" />
+      </div>
+    );
+  } // Loading Course Data
 
   if (!course) {
-    return <p className="text-center text-sm pt-6">Course not found.</p>;
+    return (
+      <div className="w-full mt-10 flex items-center justify-center">
+        <Loader2 className="h-6 w-6 animate-spin" />
+      </div>
+    );
   }
 
   const handlePublish = async () => {
