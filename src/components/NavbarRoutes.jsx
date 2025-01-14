@@ -28,11 +28,11 @@ const NavbarRoutes = () => {
           <Link href={"/"} className=" hover:text-muted-foreground">
             <Button>Exit</Button>
           </Link>
-        ) : isTeacher(userId) ? (
+        ) : (
           <Link href={"/teacher/courses"}>
             <Button>Teacher</Button>
           </Link>
-        ) : null}
+        )}
 
         {!userId && (
           <Link

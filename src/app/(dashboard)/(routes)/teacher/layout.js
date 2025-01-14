@@ -23,9 +23,9 @@ const TeacherLayout = ({ children }) => {
     );
   }
 
-  if (!isTeacher(userId)) {
-    redirect("/");
-  }
+  // if (!isTeacher(userId)) {
+  //   redirect("/");
+  // }
 
   return <div>{children}</div>;
 };
