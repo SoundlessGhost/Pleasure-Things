@@ -19,9 +19,9 @@ const Sidebar = () => {
       <div>
         <Link href={"/"} className="flex items-center p-6 mb-1.5">
           <Logo />
-          <div className="text-xs pl-2 font">
-            <p>Pleasure Things </p>
-            <p>Learning Management System</p>
+          <div className="text-xs font-bold pl-2 font">
+            <p className="text-[#3b809b] text-[18px]">Pleasure Things </p>
+            <p>Build something great!</p>
           </div>
         </Link>
 

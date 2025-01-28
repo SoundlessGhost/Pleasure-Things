@@ -6,13 +6,16 @@
   font-family: "Lucida Sans", "Lucida Sans Regular", "Lucida Grande",
     "Lucida Sans Unicode", Geneva, Verdana, sans-serif;
 }
+
 .ql-container {
   font-size: 16px !important;
 }
 
+
+
 @layer base {
   :root {
-    --background: 0 0% 100%;
+    --background: 0 0% 99%;
     --foreground: 222.2 84% 4.9%;
     --card: 0 0% 100%;
     --card-foreground: 222.2 84% 4.9%;

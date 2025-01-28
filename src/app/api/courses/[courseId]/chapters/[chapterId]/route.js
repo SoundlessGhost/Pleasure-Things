@@ -83,7 +83,6 @@ export async function PATCH(request, { params }) {
     const { title, description, videoUrl, isFree, isPublished } =
       await request.json();
 
-    // Fetch and update the chapter
     const updatedChapter = await prisma.chapter.update({
       where: { id: chapterId },
       data: {

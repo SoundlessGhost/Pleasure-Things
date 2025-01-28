@@ -1,13 +1,13 @@
 "use client";
 
+import { Loader2 } from "lucide-react";
+import { useAuth } from "@clerk/nextjs";
+import { redirect } from "next/navigation";
+
 import useAllChapters from "@/hooks/useAllChapters";
 import useSingleCourse from "@/hooks/useSingleCourse";
 import CourseNavbar from "./_components/CourseNavbar";
 import CourseSidebar from "./_components/CourseSidebar";
-
-import { useAuth } from "@clerk/nextjs";
-import { redirect } from "next/navigation";
-import { Loader2 } from "lucide-react";
 
 const CourseLayout = ({ children, params }) => {
   const { userId } = useAuth();
