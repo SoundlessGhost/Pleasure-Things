@@ -2,7 +2,6 @@
 import Link from "next/link";
 import SearchInput from "./SearchInput";
 
-import { isTeacher } from "@/lib/Teacher";
 import { usePathname } from "next/navigation";
 import { useAuth, UserButton } from "@clerk/nextjs";
 import { Button, buttonVariants } from "./ui/button";
@@ -25,13 +24,17 @@ const NavbarRoutes = () => {
       )}
       <div className="flex items-center ml-auto gap-x-2 font">
         {isTeacherPage || isCoursePage ? (
-          <Link href={"/"} className=" hover:text-muted-foreground">
+          <Link href={"/"} className="hover:text-muted-foreground">
             <Button>Exit</Button>
           </Link>
-        ) : (
+        ) : userId ? (
           <Link href={"/teacher/courses"}>
             <Button>Teacher</Button>
           </Link>
+        ) : (
+          <Button disabled className="opacity-50 cursor-not-allowed">
+            Teacher
+          </Button>
         )}
 
         {!userId && (

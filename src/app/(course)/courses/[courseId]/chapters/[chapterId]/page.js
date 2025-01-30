@@ -9,16 +9,23 @@ import useSingleChapter from "@/hooks/useSingleChapter";
 import CourseEnrollButton from "./_components/CourseEnrollButton";
 
 import { cn } from "@/lib/utils";
+import { useAuth } from "@clerk/nextjs";
+import { redirect } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { LockBanner } from "@/components/Banner";
 import { File, Loader2, Lock } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 
 const ChaptersIdPage = ({ params }) => {
+  const { userId } = useAuth();
   const { courseId, chapterId } = params;
   const { course } = useSingleCourse(courseId);
   const { attachment } = useAttachment(courseId);
   const { chapter } = useSingleChapter(courseId, chapterId);
+  
+  if (!userId) {
+    return redirect("/");
+  }
 
   if (!chapter || !course) {
     <div className="w-full flex items-center justify-center mt-8">
@@ -125,10 +132,7 @@ const ChaptersIdPage = ({ params }) => {
             </div>
           )}
 
-          <Link
-            href={"https://github.com/SoundlessGhost"}
-            target="_blank"
-          >
+          <Link href={"https://github.com/SoundlessGhost"} target="_blank">
             <div className="p-4 my-4 flex flex-col border bg-white rounded-md items-center justify-center">
               <Image src={"/github.png"} alt="github" height={30} width={30} />
               <p className="text-sm mt-2 text-slate-500 ">Source code</p>

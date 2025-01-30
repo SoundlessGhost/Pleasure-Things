@@ -42,7 +42,7 @@ const Sidebar = () => {
       <Separator />
       <div className="p-6 font text-xs text-slate-500 flex items-center justify-between">
         <h5>
-          &copy; {new Date().getFullYear()} <span>Squad Ring ( LMS )</span>
+          &copy; {new Date().getFullYear()} <span>Pleasure Things ( LMS )</span>
         </h5>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>

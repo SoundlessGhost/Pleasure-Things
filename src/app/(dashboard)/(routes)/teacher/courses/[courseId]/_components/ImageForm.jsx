@@ -43,7 +43,7 @@ const ImageForm = ({ courseId, course }) => {
         courseImage: imageUrl,
       });
 
-      toast.success("Description Updated");
+      toast.success("Image Updated");
       setIsEditing(false); // Exit editing mode
       
       course.courseImage = imageUrl; // Update the prop object locally

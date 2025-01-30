@@ -2,24 +2,24 @@
 import axios from "axios";
 import toast from "react-hot-toast";
 import CourseForm from "./_components/CourseForm";
+import useAllChapters from "@/hooks/useAllChapters";
 
-import { useRouter } from "next/navigation";
+import { Loader2 } from "lucide-react";
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { UnpublishedBanner } from "@/components/Banner";
 import { ConfirmModel } from "@/components/ConfirmModel";
-import { Loader2 } from "lucide-react";
-import useAllChapters from "@/hooks/useAllChapters";
 
 const CourseIdPage = ({ params }) => {
+  const router = useRouter();
+  
   const [course, setCourse] = useState(null);
   const [loading, setLoading] = useState(false);
   const [loadingPublish, setLoadingPublish] = useState(false);
 
-  const router = useRouter();
-  const { chapters } = useAllChapters(params.courseId);
 
-  // TODO Please 1 chapters adds otherwise not publish
+  const { chapters, refetch } = useAllChapters(params.courseId);
 
   // Fetch course details
 
@@ -45,7 +45,7 @@ const CourseIdPage = ({ params }) => {
         <Loader2 className="h-6 w-6 animate-spin" />
       </div>
     );
-  } // Loading Course Data
+  }
 
   if (!course) {
     return (
@@ -54,6 +54,14 @@ const CourseIdPage = ({ params }) => {
       </div>
     );
   }
+
+  // Function to refresh chapters after a new one is added
+
+  const handleChapterAdded = () => {
+    refetch();
+  };
+
+  // Function to Publish Course
 
   const handlePublish = async () => {
     setLoadingPublish(true);
@@ -74,6 +82,8 @@ const CourseIdPage = ({ params }) => {
     }
   };
 
+  // Function to Delete Course
+
   const handleDelete = async () => {
     setLoading(true);
     try {
@@ -93,6 +103,7 @@ const CourseIdPage = ({ params }) => {
     course.category,
     course.courseImage,
     course.price,
+    chapters.length,
   ];
 
   const totalFields = requiredFields.length;
@@ -113,7 +124,7 @@ const CourseIdPage = ({ params }) => {
           <div className="flex items-center gap-x-2">
             <Button
               onClick={handlePublish}
-              disabled={loadingPublish || !isCompleted}
+              disabled={loadingPublish || !isCompleted || chapters.length === 0}
             >
               {loadingPublish
                 ? "Loading..."
@@ -121,6 +132,7 @@ const CourseIdPage = ({ params }) => {
                 ? "Unpublish"
                 : "Publish"}
             </Button>
+
             <ConfirmModel onConfirm={handleDelete}>
               <Button disabled={loading}>
                 {loading ? "Deleting..." : "Delete"}
@@ -128,7 +140,7 @@ const CourseIdPage = ({ params }) => {
             </ConfirmModel>
           </div>
         </div>
-        <CourseForm course={course} />
+        <CourseForm course={course} onChapterAdded={handleChapterAdded} />
       </div>
     </>
   );

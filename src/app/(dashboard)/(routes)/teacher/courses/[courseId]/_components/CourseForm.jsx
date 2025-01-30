@@ -8,7 +8,7 @@ import DescriptionForm from "./DescriptionForm";
 
 import { Activity, FileCheck2, Terminal } from "lucide-react";
 
-const CourseForm = ({ course }) => {
+const CourseForm = ({ course, onChapterAdded }) => {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-6 ">
       <div className="space-y-6">
@@ -27,7 +27,7 @@ const CourseForm = ({ course }) => {
           Course Chapters
         </h2>
 
-        <CourseChapter courseId={course.id} />
+        <CourseChapter courseId={course.id} onChapterAdded={onChapterAdded} />
 
         <h2 className="flex items-center gap-x-2 my-6">
           <Activity /> Sell Your Course

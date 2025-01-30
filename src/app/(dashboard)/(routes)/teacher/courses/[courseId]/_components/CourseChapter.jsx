@@ -12,7 +12,7 @@ import { useRouter } from "next/navigation";
 import { ConfirmModel } from "@/components/ConfirmModel";
 import { Loader2, Pencil, PlusCircle, Trash } from "lucide-react";
 
-const CourseChapter = ({ courseId }) => {
+const CourseChapter = ({ courseId, onChapterAdded }) => {
   const [loading, setLoading] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [initialData, setInitialData] = useState([]);
@@ -46,22 +46,29 @@ const CourseChapter = ({ courseId }) => {
   const handleSubmit = async () => {
     setLoading(true);
 
+    const isFirstChapter = initialData.length === 0;
+
     const values = {
       title: courseChapterTitle,
       description: "",
       videoUrl: "",
-      isFree: false,
-      isPublished: false,
+      isFree: isFirstChapter,
+      isPublished: isFirstChapter,
     };
 
     try {
       const res = await axios.post(`/api/courses/${courseId}/chapters`, values);
 
-      setInitialData((prevChapterTitle) => [...prevChapterTitle, res.data]);
+      onChapterAdded();
+      setInitialData((prevChapters) => [...prevChapters, res.data]);
       setIsEditing(false);
       setCourseChapterTitle("");
 
-      toast.success("Chapter Created");
+      toast.success(
+        isFirstChapter
+          ? "First chapter created and published!"
+          : "Chapter created "
+      );
       router.refresh();
     } catch {
       toast.error("Something Went Wrong");

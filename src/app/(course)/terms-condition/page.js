@@ -6,7 +6,7 @@ const TermsConditionPage = () => {
   return (
     <div className="font">
       <h1 className=" font-extrabold text-2xl text-center p-4">
-        Terms and Conditions for Squad Ring ( LMS )
+        Terms and Conditions for Pleasure Things ( LMS )
       </h1>
 
       <Separator />

@@ -47,7 +47,7 @@ const AttachmentForm = ({ courseId }) => {
         attachment: CourseAttachment,
       });
 
-      toast.success("Description Updated");
+      toast.success("Attachment Updated");
       setInitialData(response.data);
       setIsEditing(false); // Exit editing mode
 
